@@ -15,7 +15,7 @@ namespace WindowService
 
 		protected override void OnStart(string[] args)
 		{
-			LogHelper.LogWrite("WindowServiceTemplate started");
+			LogHelper.LogWrite("WindowService started");
 
 			try 
 			{ 
@@ -45,7 +45,7 @@ namespace WindowService
 				LogHelper.LogWrite(e.ToString(), LogHelper.LogType.Error);
 			}
 
-			LogHelper.LogWrite("WindowServiceTemplate end");
+			LogHelper.LogWrite("WindowService end");
 		}
 	}
 }

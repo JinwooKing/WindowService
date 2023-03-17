@@ -3,7 +3,8 @@ using WorkerService;
 IHost host = Host.CreateDefaultBuilder(args)
 	.ConfigureServices(services =>
 	{
-		services.AddHostedService<Worker>();
+		services.AddSingleton<JokeService>();
+		services.AddHostedService<WindowsBackgroundService>();
 	})
 	.Build();
 
