@@ -52,6 +52,7 @@ namespace WindowService.Service
 					}
 
 					//TODO
+					LogHelper.LogWrite($"Service running at: {DateTimeOffset.Now}");
 					Thread.Sleep(new TimeSpan(0, 0, 1));
 				}
 			}

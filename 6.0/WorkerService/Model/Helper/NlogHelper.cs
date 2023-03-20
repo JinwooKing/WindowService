@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
-using System;
+﻿using NLog.Extensions.Logging;
 
-namespace WindowService.Common
+namespace WorkerService.Model.Helper
 {
-	class LogHelper
+	/// <summary>
+	/// 로그파일에 로그 생성
+	/// </summary>
+	public class NlogHelper
 	{
-		protected static readonly Microsoft.Extensions.Logging.ILogger logger = LoggerFactory.Create(builder => builder.AddNLog()).CreateLogger<Service1>();
-
+		protected static readonly Microsoft.Extensions.Logging.ILogger logger = LoggerFactory.Create(builder => builder.AddNLog()).CreateLogger<Program>();
 		public enum LogType
 		{
 			Info,
@@ -17,6 +17,8 @@ namespace WindowService.Common
 
 		public static void LogWrite(String msg, LogType logtype = LogType.Info)
 		{
+			Console.WriteLine(msg);
+
 			switch (logtype)
 			{
 				case LogType.Info:
