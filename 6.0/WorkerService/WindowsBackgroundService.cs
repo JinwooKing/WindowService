@@ -1,3 +1,4 @@
+using Microsoft.Data.SqlClient;
 using WorkerService.Model.Helper;
 
 namespace WorkerService
@@ -8,7 +9,10 @@ namespace WorkerService
 		//Windows 이벤트 뷰어(Event Viewer)에 남는 로그
 		private readonly ILogger<WindowsBackgroundService> _logger;
 
+		private Thread _Thread;
+
 		private CancellationToken _stoppingToken;
+
 		public WindowsBackgroundService(JokeService jokeService, ILogger<WindowsBackgroundService> logger)
 		{
 			_jokeService = jokeService;
@@ -17,35 +21,54 @@ namespace WorkerService
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
+			//var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).Build();
+			//config["Logging:LogLevel:Default"]
+
 			try
 			{
-				while (!_stoppingToken.IsCancellationRequested)
-				{
-					string joke = _jokeService.GetJoke();
-					NlogHelper.LogWrite($"{joke}");
-					NlogHelper.LogWrite($"Worker running at: {DateTimeOffset.Now}");
-					await Task.Delay(TimeSpan.FromSeconds(1), _stoppingToken);
-				}
+				_stoppingToken = stoppingToken;
+				_Thread = new Thread(new ThreadStart(Dowork));
+				_Thread.Start();
 			}
 			catch (TaskCanceledException)
 			{
-				// When the stopping token is canceled, for example, a call made from services.msc,
-				// we shouldn't exit with a non-zero exit code. In other words, this is expected...
+
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "{Message}", ex.Message);
 
-				//Terminates this process and returns an exit code to the operating system.
-				// This is required to avoid the 'BackgroundServiceExceptionBehavior', which
-				// performs one of two scenarios:
-				// 1.When set to "Ignore": will do nothing at all, errors cause zombie services.
-				// 2.When set to "StopHost": will cleanly stop the host, and log errors.
-
-
-				// In order for the Windows Service Management system to leverage configured
-				// recovery options, we need to terminate the process with a non - zero exit code.
 				Environment.Exit(1);
+			}
+		}
+
+		public async void Dowork()
+		{
+			while (!_stoppingToken.IsCancellationRequested)
+			{
+				_logger.LogInformation($"Worker running at: {DateTimeOffset.Now}");
+
+				using (SqlConnection conn = new SqlConnection(DBHelper.GetConnectionString()))
+				{
+					conn.Open();
+
+					string sql = "SELECT @@VERSION";
+
+					using (SqlCommand command = new SqlCommand(sql, conn))
+					{
+						using (SqlDataReader reader = command.ExecuteReader())
+						{
+							while (reader.Read())
+							{
+								Console.WriteLine("{0}", reader.GetString(0));
+							}
+						}					
+					}
+
+					conn.Close();
+				}
+
+				await Task.Delay(TimeSpan.FromSeconds(1), _stoppingToken);
 			}
 		}
 	}
