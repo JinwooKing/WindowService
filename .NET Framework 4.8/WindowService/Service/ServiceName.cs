@@ -9,12 +9,13 @@ namespace WindowService.Service
 		ManualResetEvent StopThread;
 		Thread th;
 
-		/// <summary>
-		/// 서비스 시작
-		/// </summary>
-		public void StartService()
+        #region 서비스 시작 종료
+        /// <summary>
+        /// 서비스 시작
+        /// </summary>
+        public void StartService()
 		{
-			th = new Thread(new ThreadStart(StartServiceName));
+			th = new Thread(new ThreadStart(DoWork));
 			th.Start();
 
 			IniHelper.InitIni();
@@ -38,8 +39,9 @@ namespace WindowService.Service
 				th.Abort();
 
 		}
+        #endregion
 
-		public void StartServiceName()
+        public void DoWork()
 		{
 			try
 			{

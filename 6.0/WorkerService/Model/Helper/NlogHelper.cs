@@ -7,7 +7,7 @@ namespace WorkerService.Model.Helper
 	/// </summary>
 	public class NlogHelper
 	{
-		protected static readonly Microsoft.Extensions.Logging.ILogger logger = LoggerFactory.Create(builder => builder.AddNLog()).CreateLogger<Program>();
+		public static readonly Microsoft.Extensions.Logging.ILogger logger = LoggerFactory.Create(builder => builder.AddNLog()).CreateLogger<Program>();
 		public enum LogType
 		{
 			Info,

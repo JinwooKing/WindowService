@@ -1,4 +1,6 @@
+using Dapper;
 using Microsoft.Data.SqlClient;
+using System.Data;
 using WorkerService.Model.Helper;
 
 namespace WorkerService
@@ -9,27 +11,23 @@ namespace WorkerService
 		//Windows 이벤트 뷰어(Event Viewer)에 남는 로그
 		private readonly ILogger<WindowsBackgroundService> _logger;
 
-		private Thread _Thread;
+		public WindowsBackgroundService(JokeService jokeService, ILogger<WindowsBackgroundService> logger) => (_jokeService, _logger) = (jokeService, logger);
 
-		private CancellationToken _stoppingToken;
-
-		public WindowsBackgroundService(JokeService jokeService, ILogger<WindowsBackgroundService> logger)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			_jokeService = jokeService;
-			_logger = logger;
-		}
-
-		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-		{
-			//var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).Build();
-			//config["Logging:LogLevel:Default"]
-
 			try
 			{
-				_stoppingToken = stoppingToken;
-				_Thread = new Thread(new ThreadStart(Dowork));
-				_Thread.Start();
-			}
+                while (!stoppingToken.IsCancellationRequested)
+                {
+                    _logger.LogInformation($"Worker running at: {DateTimeOffset.Now}");
+                    //string joke = _jokeService.GetJoke();
+                    //_logger.LogInformation("{Joke}", joke);
+
+                    //PrintVersionUsingDapper();
+
+                    await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
+                }
+            }
 			catch (TaskCanceledException)
 			{
 
@@ -42,33 +40,39 @@ namespace WorkerService
 			}
 		}
 
-		public async void Dowork()
+		public void PrintVersion()
 		{
-			while (!_stoppingToken.IsCancellationRequested)
+			using (SqlConnection conn = new SqlConnection(DBHelper.GetConnectionString()))
 			{
-				_logger.LogInformation($"Worker running at: {DateTimeOffset.Now}");
+				conn.Open();
 
-				using (SqlConnection conn = new SqlConnection(DBHelper.GetConnectionString()))
+				string sql = "SELECT @@VERSION";
+
+				using (SqlCommand command = new SqlCommand(sql, conn))
 				{
-					conn.Open();
-
-					string sql = "SELECT @@VERSION";
-
-					using (SqlCommand command = new SqlCommand(sql, conn))
+					using (SqlDataReader reader = command.ExecuteReader())
 					{
-						using (SqlDataReader reader = command.ExecuteReader())
+						while (reader.Read())
 						{
-							while (reader.Read())
-							{
-								Console.WriteLine("{0}", reader.GetString(0));
-							}
-						}					
+							Console.WriteLine("{0}", reader.GetString(0));
+						}
 					}
-
-					conn.Close();
 				}
 
-				await Task.Delay(TimeSpan.FromSeconds(1), _stoppingToken);
+				conn.Close();
+			}
+		}
+
+		public void PrintVersionUsingDapper()
+		{
+			using (SqlConnection conn = new SqlConnection(DBHelper.GetConnectionString()))
+			{
+				conn.Open();
+
+				string sql = "SELECT @@VERSION";
+				var p = new DynamicParameters();
+
+				Console.WriteLine("{0}", conn.Query<string>(sql, p, commandType: CommandType.Text).FirstOrDefault());
 			}
 		}
 	}
