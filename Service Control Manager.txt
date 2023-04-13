@@ -1,7 +1,7 @@
 Service Control Manager(서비스 제어 관리자) 
 SC(sc.exe)는 서비스 제어 관리자 및 서비스와의 통신에 사용되는 명령줄 프로그램입니다.
-https://learn.microsoft.com/ko-kr/windows/win32/services/service-control-manager
 
+https://learn.microsoft.com/ko-kr/windows/win32/services/service-control-manager
 
 //서비스 등록
 sc.exe create ".NET Joke Service" binpath="D:\WindowServiceTemplate\6.0\WorkerService\bin\Debug\net6.0\WorkerService.exe"

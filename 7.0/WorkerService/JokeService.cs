@@ -1,5 +1,5 @@
-﻿namespace WorkerService
-{
+﻿namespace App.WindowsService;
+
 	public sealed class JokeService
 	{
 		public string GetJoke()
@@ -41,4 +41,4 @@
 	}
 
 	readonly record struct Joke(string Setup, string Punchline);
-}
+

@@ -3,7 +3,7 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using WorkerService.Model.Helper;
 
-namespace WorkerService
+namespace App.WindowsService
 {
 	public sealed class WindowsBackgroundService : BackgroundService
 	{
@@ -22,8 +22,9 @@ namespace WorkerService
                     _logger.LogInformation($"Worker running at: {DateTimeOffset.Now}");
                     //string joke = _jokeService.GetJoke();
                     //_logger.LogInformation("{Joke}", joke);
-
+					                    
                     //PrintVersionUsingDapper();
+					//PrintVersion();
 
                     await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
                 }
@@ -54,7 +55,7 @@ namespace WorkerService
 					{
 						while (reader.Read())
 						{
-							Console.WriteLine("{0}", reader.GetString(0));
+							Console.WriteLine("PrintVersion: {0}", reader.GetString(0));
 						}
 					}
 				}
@@ -63,16 +64,18 @@ namespace WorkerService
 			}
 		}
 
-		public void PrintVersionUsingDapper()
+		public async void PrintVersionUsingDapper()
 		{
 			using (SqlConnection conn = new SqlConnection(DBHelper.GetConnectionString()))
 			{
-				conn.Open();
+				await conn.OpenAsync();
 
 				string sql = "SELECT @@VERSION";
 				var p = new DynamicParameters();
 
-				Console.WriteLine("{0}", conn.Query<string>(sql, p, commandType: CommandType.Text).FirstOrDefault());
+                var query = await conn.QueryAsync<string>(sql, p, commandType: CommandType.Text);
+
+                Console.WriteLine("PrintVersionUsingDapper: {0}", query.FirstOrDefault());
 			}
 		}
 	}

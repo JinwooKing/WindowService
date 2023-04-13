@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowService", ".NET Framework 4.8\WindowService\WindowService.csproj", "{B1F02E83-7ED9-4AD6-8318-176DF8804414}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService", "6.0\WorkerService\WorkerService.csproj", "{674C660A-1C7B-46BE-AF7F-6E5BA3DC13E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService", "7.0\WorkerService\WorkerService.csproj", "{674C660A-1C7B-46BE-AF7F-6E5BA3DC13E4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "솔루션 항목", "솔루션 항목", "{64D578D2-F3D3-45C2-9511-BFB496BEB157}"
 	ProjectSection(SolutionItems) = preProject
