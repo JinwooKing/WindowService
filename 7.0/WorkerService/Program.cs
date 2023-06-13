@@ -1,6 +1,4 @@
 using App.WindowsService;
-using Microsoft.Extensions.Logging.Configuration;
-using Microsoft.Extensions.Logging.EventLog;
 using NLog.Extensions.Logging;
 
 //var logger = LogManager.LoadConfiguration("NLog.config").GetCurrentClassLogger();

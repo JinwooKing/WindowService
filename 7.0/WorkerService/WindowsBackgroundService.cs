@@ -20,11 +20,11 @@ namespace App.WindowsService
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     _logger.LogInformation($"Worker running at: {DateTimeOffset.Now}");
-                    //string joke = _jokeService.GetJoke();
-                    //_logger.LogInformation("{Joke}", joke);
+                    string joke = _jokeService.GetJoke();
+                    _logger.LogInformation("{Joke}", joke);
 					                    
-                    //PrintVersionUsingDapper();
-					//PrintVersion();
+                    PrintVersionUsingDapper();
+					PrintVersion();
 
                     await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
                 }

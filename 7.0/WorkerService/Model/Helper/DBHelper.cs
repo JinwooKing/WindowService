@@ -5,7 +5,7 @@ namespace WorkerService.Model.Helper
 {
     public class DBHelper
     {
-		private static string SERVER = "000.000.000.000,0000";
+        private static string SERVER = "000.000.000.000,0000";
 		private static string UID = "00";
 		private static string PWD = "00";
 		private static string DATABASE = "AdventureWorksLT2019";
@@ -27,7 +27,8 @@ namespace WorkerService.Model.Helper
 		/// <returns></returns>
 		public static string GetConnectionString()
         {
-			return sqlConnectionStringBuilder.ConnectionString;
+			//return App.WindowsService.Model.Utils.Consts.mssql;
+            return sqlConnectionStringBuilder.ConnectionString;
         }
     }
 }
