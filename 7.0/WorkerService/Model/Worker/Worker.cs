@@ -42,7 +42,7 @@ namespace App.WindowsService.Model.Worker
             }
         }
         
-        #region Timer
+        #region 스케줄 동작 Timer 방식
         public async void Start()
         {
             timer = new Timer(DoWork, null, TimeSpan.Zero, GetTimeToNext());
@@ -64,7 +64,8 @@ namespace App.WindowsService.Model.Worker
             }
         }
         #endregion
-        
+
+        #region 다음 실행 시간 구하는 함수 모음
         /// <summary>
         /// 다음 실행 시간까지 딜레이
         /// </summary>
@@ -122,6 +123,7 @@ namespace App.WindowsService.Model.Worker
                 return TimeSpan.MaxValue;
             }
         }
+        #endregion
 
     }
 }

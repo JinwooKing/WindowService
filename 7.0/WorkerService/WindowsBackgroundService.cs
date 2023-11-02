@@ -53,6 +53,9 @@ namespace App.WindowsService
             await MyService.GetVersionUsingDapper();
         }
 
+        /// <summary>
+        /// 서비스 시작
+        /// </summary>
         private async void StartService()
         {
             var UserInfos = await MyService.GetUserInfos();
