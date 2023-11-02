@@ -1,5 +1,7 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using App.WindowsService.Model.Utils;
+using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Logging;
+using System.Runtime.CompilerServices;
 
 namespace WorkerService.Model.Helper
 {
@@ -28,7 +30,8 @@ namespace WorkerService.Model.Helper
 		public static string GetConnectionString()
         {
 			//return App.WindowsService.Model.Utils.Consts.mssql;
-            return sqlConnectionStringBuilder.ConnectionString;
+			//return sqlConnectionStringBuilder.ConnectionString;
+            return Consts.local ?? sqlConnectionStringBuilder.ConnectionString;
         }
     }
 }
