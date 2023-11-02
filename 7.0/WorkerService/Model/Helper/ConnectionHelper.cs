@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace WorkerService.Model.Helper
 {
-    public class DBHelper
+    public class ConnectionHelper
     {
         private static string SERVER = "000.000.000.000,0000";
 		private static string UID = "00";
@@ -27,11 +27,16 @@ namespace WorkerService.Model.Helper
 		///  SqlConnection 객체를 반환
 		/// </summary>
 		/// <returns></returns>
-		public static string GetConnectionString()
+		private static string GetConnectionString()
         {
 			//return App.WindowsService.Model.Utils.Consts.mssql;
 			//return sqlConnectionStringBuilder.ConnectionString;
             return Consts.local ?? sqlConnectionStringBuilder.ConnectionString;
         }
+
+		public static SqlConnection GetConnection()
+		{
+			return new SqlConnection(GetConnectionString());
+		}
     }
 }

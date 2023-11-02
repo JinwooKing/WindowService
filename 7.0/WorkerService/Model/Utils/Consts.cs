@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace App.WindowsService.Model.Utils
+﻿namespace App.WindowsService.Model.Utils
 {
     public class Consts
     {
@@ -23,8 +17,11 @@ namespace App.WindowsService.Model.Utils
         public static readonly string? oracle = configuration.GetConnectionString("oracle");
         public static readonly string? mariadb = configuration.GetConnectionString("mariadb");
 
-        public static readonly int setting = Convert.ToInt16(configuration.GetSection("Consts:setting").Value);
-        public static readonly int setting2 = Convert.ToInt16(configuration.GetSection("Consts:setting2").Value);
+        public static readonly string? setting = configuration.GetSection("Consts:setting").Value;
+        public static readonly string? setting2 =configuration.GetSection("Consts:setting2").Value;
 
+        public static readonly int CYCLETIME_HOUR = Convert.ToInt16(configuration.GetSection("Consts:HOUR").Value);
+        public static readonly int CYCLETIME_MINUTE = Convert.ToInt16(configuration.GetSection("Consts:CYCLETIME_MINUTE").Value);
+        public static readonly int CYCLETIME_SECOND = Convert.ToInt16(configuration.GetSection("Consts:CYCLETIME_SECOND").Value);
     }
 }

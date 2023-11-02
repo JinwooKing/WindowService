@@ -1,39 +1,40 @@
-using Dapper;
-using Microsoft.Data.SqlClient;
-using System.Data;
-using WorkerService.Model.Helper;
+using App.WindowsService.Model.Service;
+using App.WindowsService.Model.Utils;
+using App.WindowsService.Model.Worker;
 
 namespace App.WindowsService
 {
-	public sealed class WindowsBackgroundService : BackgroundService
-	{
-		private readonly JokeService _jokeService;
-		//Windows 이벤트 뷰어(Event Viewer)에 남는 로그
-		private readonly ILogger<WindowsBackgroundService> _logger;
+    public sealed class WindowsBackgroundService : BackgroundService
+    {
+        
+        private readonly ILogger<WindowsBackgroundService> _logger;
+        private static List<Thread> thList = new List<Thread>();
+        
+        //private readonly JokeService _jokeService;
+        //Windows 이벤트 뷰어(Event Viewer)에 남는 로그
 
-		public WindowsBackgroundService(JokeService jokeService, ILogger<WindowsBackgroundService> logger) => (_jokeService, _logger) = (jokeService, logger);
+        //public WindowsBackgroundService(JokeService jokeService, ILogger<WindowsBackgroundService> logger) => (_jokeService, _logger) = (jokeService, logger);
+        public WindowsBackgroundService(ILogger<WindowsBackgroundService> logger) => (_logger) = (logger);
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			try
 			{
+                if (Consts.environment == "Development")
+                    await Test();
+
+                StartService();
+
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    _logger.LogInformation($"Worker running at: {DateTimeOffset.Now}");
-                    string joke = _jokeService.GetJoke();
-                    _logger.LogInformation("{Joke}", joke);
-					                    
-                    PrintVersionUsingDapper();
-					PrintVersion();
-
-                    await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
+                    await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
                 }
             }
-			catch (TaskCanceledException)
-			{
-
-			}
-			catch (Exception ex)
+            catch (TaskCanceledException tex)
+            {
+                _logger.LogError(tex, "{Message}", tex.Message);
+            }
+            catch (Exception ex)
 			{
 				_logger.LogError(ex, "{Message}", ex.Message);
 
@@ -41,42 +42,35 @@ namespace App.WindowsService
 			}
 		}
 
-		public void PrintVersion()
-		{
-			using (SqlConnection conn = new SqlConnection(DBHelper.GetConnectionString()))
-			{
-				conn.Open();
+        /// <summary>
+        /// 테스트 코드 
+        /// launchSettings.json Environment 설정 값에 따라 실행
+        /// </summary>
+        /// <returns></returns>
+        private async Task Test()
+        {
+            await MyService.GetVersion();
+            await MyService.GetVersionUsingDapper();
+        }
 
-				string sql = "SELECT @@VERSION";
+        private async void StartService()
+        {
+            var UserInfos = await MyService.GetUserInfos();
 
-				using (SqlCommand command = new SqlCommand(sql, conn))
-				{
-					using (SqlDataReader reader = command.ExecuteReader())
-					{
-						while (reader.Read())
-						{
-							Console.WriteLine("PrintVersion: {0}", reader.GetString(0));
-						}
-					}
-				}
+            foreach(var groupedUserInfos in UserInfos.GroupBy(g => g.age))
+            {
+                var worker = new Worker(groupedUserInfos.ToList());
 
-				conn.Close();
-			}
-		}
+                #region Thread
+                var th = new Thread(new ThreadStart(worker.DoWork));
+                th.Start();
+                thList.Add(th);
+                #endregion
 
-		public async void PrintVersionUsingDapper()
-		{
-			using (SqlConnection conn = new SqlConnection(DBHelper.GetConnectionString()))
-			{
-				await conn.OpenAsync();
-
-				string sql = "SELECT @@VERSION";
-				var p = new DynamicParameters();
-
-                var query = await conn.QueryAsync<string>(sql, p, commandType: CommandType.Text);
-
-                Console.WriteLine("PrintVersionUsingDapper: {0}", query.FirstOrDefault());
-			}
-		}
-	}
+                #region Timer
+                //worker.Start();
+                #endregion
+            }
+        }
+    }
 }
