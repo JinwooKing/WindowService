@@ -1,6 +1,7 @@
 using App.WindowsService.Model.Service;
 using App.WindowsService.Model.Utils;
 using App.WindowsService.Model.Worker;
+using WorkerService.Model.Helper;
 
 namespace App.WindowsService
 {
@@ -12,8 +13,10 @@ namespace App.WindowsService
         public WindowsBackgroundService(ILogger<WindowsBackgroundService> logger) => (_logger) = (logger);
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			try
-			{
+            NlogHelper.LogWrite($"Worker running at: {DateTime.Now}");
+
+            try
+            {
                 if (Consts.environment == "Development")
                     await Test();
 
@@ -21,7 +24,8 @@ namespace App.WindowsService
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
+                    NlogHelper.LogWrite($"Worker running at: {DateTime.Now}");
+                    await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
                 }
             }
             catch (TaskCanceledException tex)

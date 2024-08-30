@@ -1,6 +1,7 @@
 using App.WindowsService.Model.Service;
 using App.WindowsService.Model.Utils;
 using App.WindowsService.Model.Worker;
+using WorkerService.Model.Helper;
 
 namespace App.WindowsService
 {
@@ -18,16 +19,17 @@ namespace App.WindowsService
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			try
-			{
-                if (Consts.environment == "Development")
-                    await Test();
+            try
+            {
+                //if (Consts.environment == "Development")
+                    //await Test();
 
-                StartService();
+                    //StartService();
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
+                    NlogHelper.LogWrite($"Worker running at: {DateTime.Now}");
+                    await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
                 }
             }
             catch (TaskCanceledException tex)
