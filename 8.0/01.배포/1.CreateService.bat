@@ -1,10 +1,10 @@
 
 @echo off
 
-SC CREATE "WA_WorkerServiceNet8" BINPATH= "%~dp0%WorkerServiceNet8.exe"
+SC CREATE "JW_WorkerServiceNet8" BINPATH= "%~dp0%WorkerServiceNet8.exe"
 if not "%ERRORLEVEL%" == "0" goto ERROR1
-SC DESCRIPTION "WA_WorkerServiceNet8" "WA Technology" 
-echo WA_WorkerServiceNet8 설치완료
+SC DESCRIPTION "JW_WorkerServiceNet8" "JINWOOKING" 
+echo JW_WorkerServiceNet8 설치완료
 echo.
 
 :ERROR1
